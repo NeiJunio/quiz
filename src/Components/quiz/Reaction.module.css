@@ -1,0 +1,31 @@
+
+.reacao {
+  min-height: 250px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 20px;
+  padding: 32px;
+
+  text-align: center;
+
+  background-color: #f5f0fa;
+  border-radius: 12px;
+}
+
+.mensagem {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  white-space: pre-line;
+}
+
+.transicao {
+  background-color: #eee5fa;
+  border: 1px solid #8261b9;
+}

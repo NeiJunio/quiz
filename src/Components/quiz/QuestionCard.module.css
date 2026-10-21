@@ -1,0 +1,25 @@
+
+.opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.opcao {
+  padding: 14px;
+  background-color: rgb(155, 94, 94);
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.opcao:hover {
+  background-color: #b33131;
+}
+
+.opcao[aria-pressed="true"] {
+  background-color: #eee6ff;
+  border-color: #7652b5;
+}

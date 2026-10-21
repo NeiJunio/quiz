@@ -1,0 +1,45 @@
+
+.container {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background-color: #f5f0fa;
+  border-radius: 12px;
+}
+
+.mensagens {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+.linha {
+  font-size: 22px;
+  line-height: 1.5;
+  color: #493d57;
+
+  opacity: 0;
+  animation: aparecer 0.5s ease forwards;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .linha {
+    opacity: 1;
+    animation: none;
+  }
+}
