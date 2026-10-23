@@ -31,6 +31,8 @@ export default function Quiz() {
 
     const [reacao, setReacao] = useState<ReactionCue | null>(null);
 
+    const [mensagemErroEnvio, setMensagemErroEnvio] = useState("");
+
     const envioIdRef = useRef<string | null>(null);
 
     function responder(resposta: string) {
@@ -112,6 +114,14 @@ export default function Quiz() {
                         }),
                     });
 
+
+                    if (respostaHTTP.status === 429) {
+                        throw new Error(
+                            "Muitas tentativas de envio foram realizadas. " +
+                            "Aguarde alguns minutos antes de tentar novamente."
+                        );
+                    }
+
                     const resultado = await respostaHTTP.json();
 
                     if (!respostaHTTP.ok || resultado.ok !== true) {
@@ -121,10 +131,20 @@ export default function Quiz() {
                     }
 
                     setTela("concluido");
-                } catch (erro) {
+                }
+                catch (erro) {
                     console.error("Erro ao enviar respostas:", erro);
+
+                    const mensagem =
+                        erro instanceof Error &&
+                            erro.message.startsWith("Muitas tentativas de envio")
+                            ? erro.message
+                            : "Não conseguimos confirmar o envio das suas respostas. Tente novamente.";
+
+                    setMensagemErroEnvio(mensagem);
                     setTela("erroEnvio");
                 }
+
             }
 
             void enviarRespostas();
@@ -260,9 +280,11 @@ export default function Quiz() {
             <section>
                 <h2>Ops, tivemos um probleminha! 😅</h2>
 
-                <p>
-                    Não conseguimos confirmar o envio das suas respostas.
+
+                <p role="alert">
+                    {mensagemErroEnvio}
                 </p>
+
 
                 <p>
                     Mas não se preocupe, suas respostas continuam

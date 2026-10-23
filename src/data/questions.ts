@@ -98,7 +98,7 @@ export const questions: QuizQuestion[] = [
         prompt: "Qual comida você dificilmente recusaria?",
         type: "text",
         placeholder: "Pode ser qualquer coisa...",
-        maxLength: 80,
+        maxLength: 180,
     },
     {
         id: "perguntaQueFaltou",
@@ -106,7 +106,7 @@ export const questions: QuizQuestion[] = [
             "Tem alguma pergunta que você gostaria que eu tivesse feito, mas não fiz? 👀",
         type: "text",
         placeholder: "Pode contar, fiquei curioso...",
-        maxLength: 200,
+        maxLength: 250,
     },
     {
         id: "sugestaoComentario",
@@ -114,7 +114,7 @@ export const questions: QuizQuestion[] = [
             "Antes de terminar... quer deixar alguma sugestão ou comentário? 💌",
         type: "text",
         placeholder: "Esse espaço é todo seu...",
-        maxLength: 350,
+        maxLength: 450,
     }
 ]
 
