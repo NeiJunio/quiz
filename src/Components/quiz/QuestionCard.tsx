@@ -1,30 +1,35 @@
+import { useId, useState, type SubmitEvent } from "react";
+
 import type { QuizQuestion } from "@/types/quiz";
 
 import OptionButton from "./OptionButton";
-
-import { useState, type SubmitEvent } from "react"
-
 import styles from "./QuestionCard.module.css";
 
 type QuestionCardProps = {
     pergunta: QuizQuestion;
+    numero: number;
     respostaSelecionada: string | null;
     onResponder: (resposta: string) => void;
-}
+};
 
-export default function QuestionCard({ pergunta, respostaSelecionada, onResponder }: QuestionCardProps) {
-
+export default function QuestionCard({
+    pergunta,
+    numero,
+    respostaSelecionada,
+    onResponder,
+}: QuestionCardProps) {
     const [texto, setTexto] = useState(respostaSelecionada ?? "");
     const [erro, setErro] = useState("");
+    const tituloId = useId();
+    const contadorId = useId();
+    const erroId = useId();
 
     function enviarTexto(event: SubmitEvent<HTMLFormElement>) {
-
         event.preventDefault();
-
         const resposta = texto.trim();
 
         if (resposta.length < 2) {
-            setErro("Conta pelo menos um pouquinho");
+            setErro("Conte pelo menos um pouquinho antes de continuar.");
             return;
         }
 
@@ -33,61 +38,67 @@ export default function QuestionCard({ pergunta, respostaSelecionada, onResponde
     }
 
     return (
-        <section>
-            <h2>{pergunta.prompt}</h2>
+        <section className={styles.card} aria-labelledby={tituloId}>
+            <div className={styles.questionHead}>
+                <p className={styles.questionNumber}>
+                    Pista {String(numero).padStart(2, "0")}
+                </p>
+                <span aria-hidden="true">{String(numero).padStart(2, "0")}</span>
+            </div>
 
-            {pergunta.type === "choice" ?
-                (
-                    <div className={styles.opcoes}>
-                        {pergunta.options?.map((opcao, indice) => (
-                            <OptionButton
-                                key={opcao.value}
-                                option={opcao}
-                                index={indice}
-                                selected={respostaSelecionada === opcao.value}
-                                onSelect={onResponder}
-                            />
-                        ))}
-                        {respostaSelecionada !== null && (
-                            <p>Resposta selecionada: {respostaSelecionada}</p>
-                        )}
-                    </div>
-                ) : (
-                    <form onSubmit={enviarTexto} noValidate>
-                        <label htmlFor="resposta-aberta">
-                            Sua resposta:
-                        </label>
+            <h1 className={styles.prompt} id={tituloId}>
+                {pergunta.prompt}
+            </h1>
 
-                        <textarea
-                            name="resposta-aberta"
-                            id="resposta-aberta"
-                            placeholder={pergunta.placeholder}
-                            maxLength={pergunta.maxLength}
-                            rows={4}
-                            value={texto}
-                            onChange={(e) => {
-                                setTexto(e.target.value)
-                                setErro("");
-                            }}
+            {pergunta.type === "choice" ? (
+                <div className={styles.options} role="group" aria-labelledby={tituloId}>
+                    {pergunta.options.map((opcao, indice) => (
+                        <OptionButton
+                            key={opcao.value}
+                            option={opcao}
+                            index={indice}
+                            selected={respostaSelecionada === opcao.value}
+                            onSelect={onResponder}
                         />
+                    ))}
+                </div>
+            ) : (
+                <form className={styles.textForm} onSubmit={enviarTexto} noValidate>
+                    <label htmlFor={`resposta-${pergunta.id}`}>Sua resposta</label>
 
-                        <small>
-                            {texto.length}/{pergunta.maxLength ?? 200} caracteres
-                        </small>
+                    <textarea
+                        name={pergunta.id}
+                        id={`resposta-${pergunta.id}`}
+                        placeholder={pergunta.placeholder}
+                        maxLength={pergunta.maxLength}
+                        rows={5}
+                        value={texto}
+                        aria-invalid={Boolean(erro)}
+                        aria-describedby={`${contadorId}${erro ? ` ${erroId}` : ""}`}
+                        onChange={(event) => {
+                            setTexto(event.target.value);
+                            setErro("");
+                        }}
+                    />
 
-                        {erro && (
-                            <p role="alert">{erro}</p>
-                        )}
+                    <div className={styles.textMeta}>
+                        <p className={styles.helper}>Escreva do seu jeito.</p>
+                        <p id={contadorId} className={styles.counter} aria-live="polite">
+                            {texto.length}/{pergunta.maxLength}
+                        </p>
+                    </div>
 
-                        <button type="submit">
-                            Guardar resposta
-                        </button>
+                    {erro && (
+                        <p className={styles.error} id={erroId} role="alert">
+                            {erro}
+                        </p>
+                    )}
 
-                    </form>
-                )
-            }
-
-        </section >
-
-    )
+                    <button className={styles.saveButton} type="submit">
+                        Guardar resposta <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+            )}
+        </section>
+    );
 }

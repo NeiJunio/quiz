@@ -1,31 +1,158 @@
-
-.reacao {
-  min-height: 250px;
-
+.reaction {
+  position: relative;
+  width: 100%;
+  max-width: 650px;
+  min-width: 0;
+  min-height: 420px;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
-
-  gap: 20px;
-  padding: 32px;
-
+  padding: clamp(32px, 8vw, 70px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 50% 50% 28px 28px / 22% 22% 28px 28px;
   text-align: center;
-
-  background-color: #f5f0fa;
-  border-radius: 12px;
+  background:
+    radial-gradient(circle at 50% 12%, var(--act-soft), transparent 42%),
+    linear-gradient(155deg, rgba(45, 37, 78, 0.92), rgba(17, 14, 33, 0.96));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
 }
 
-.mensagem {
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 1.5;
+.reaction::before,
+.reaction::after {
+  position: absolute;
+  border: 1px solid rgba(225, 196, 255, 0.08);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
 
+.reaction::before {
+  width: 86%;
+  aspect-ratio: 1;
+}
+
+.reaction::after {
+  width: 65%;
+  aspect-ratio: 1;
+  border-style: dashed;
+}
+
+.turn {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(197, 136, 255, 0.21), transparent 42%),
+    linear-gradient(155deg, rgba(47, 31, 72, 0.94), rgba(13, 10, 27, 0.97));
+}
+
+.ripple {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 24px;
+  place-items: center;
+  border: 1px solid rgba(225, 196, 255, 0.31);
+  border-radius: 50%;
+  background: rgba(164, 124, 236, 0.1);
+  box-shadow: 0 0 38px rgba(164, 124, 236, 0.15);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+.ripple span {
+  color: var(--lilac);
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.eyebrow,
+.message,
+.wait {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  margin-bottom: 10px;
+  color: var(--act-accent);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.message {
+  max-width: 31rem;
   white-space: pre-line;
+  text-wrap: balance;
+  font-family: var(--font-display), serif;
+  font-size: clamp(2rem, 6vw, 3.3rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  animation: messageIn 480ms var(--ease-out) 100ms both;
 }
 
-.transicao {
-  background-color: #eee5fa;
-  border: 1px solid #8261b9;
+.wait {
+  display: flex;
+  gap: 6px;
+  margin-top: 28px;
+}
+
+.wait span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--act-accent);
+  animation: blink 1s ease-in-out infinite;
+}
+
+.wait span:nth-child(2) {
+  animation-delay: 140ms;
+}
+
+.wait span:nth-child(3) {
+  animation-delay: 280ms;
+}
+
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 54px rgba(164, 124, 236, 0.28);
+    transform: scale(1.035);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@media (max-width: 560px) {
+  .reaction {
+    min-height: 360px;
+    border-radius: 42% 42% 22px 22px / 15% 15% 22px 22px;
+  }
 }

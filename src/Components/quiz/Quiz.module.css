@@ -1,17 +1,375 @@
+.experience {
+  --act-accent: #b98df3;
+  --act-soft: rgba(185, 141, 243, 0.16);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100svh;
+  place-items: center;
+  align-items: safe center;
+  overflow: hidden;
+  padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right))
+    max(32px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(164, 124, 236, 0.15), transparent 31rem),
+    radial-gradient(circle at 88% 86%, rgba(75, 55, 133, 0.2), transparent 34rem),
+    linear-gradient(145deg, #100e21 0%, #0b0919 55%, #15102a 100%);
+  transition: background 700ms ease;
+}
 
-.container {
-  padding: 24px;
+.experience[data-act="2"] {
+  --act-accent: #9a8fff;
+  --act-soft: rgba(114, 105, 226, 0.18);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(84, 72, 182, 0.2), transparent 31rem),
+    radial-gradient(circle at 88% 86%, rgba(164, 124, 236, 0.13), transparent 34rem),
+    linear-gradient(145deg, #0f0e25 0%, #0a0b1d 55%, #15122f 100%);
+}
+
+.experience[data-act="3"] {
+  --act-accent: #d0a9ff;
+  --act-soft: rgba(159, 91, 219, 0.18);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(118, 61, 159, 0.19), transparent 31rem),
+    radial-gradient(circle at 88% 86%, rgba(103, 78, 166, 0.18), transparent 34rem),
+    linear-gradient(145deg, #0d0a1b 0%, #080711 55%, #170d2a 100%);
+}
+
+.ambientGlow {
+  position: absolute;
+  z-index: -2;
+  top: 50%;
+  left: 50%;
+  width: min(62rem, 110vw);
+  aspect-ratio: 1.8;
+  border-radius: 50%;
+  background: var(--act-soft);
+  filter: blur(100px);
+  opacity: 0.72;
+  transform: translate(-50%, -50%);
+  transition: background 700ms ease;
+}
+
+.orbit {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: min(76rem, 145vw);
+  aspect-ratio: 1;
+  border: 1px solid rgba(225, 196, 255, 0.11);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-18deg) scaleY(0.52);
+}
+
+.orbit::before,
+.orbit::after {
+  position: absolute;
+  content: "";
+  border-radius: 50%;
+}
+
+.orbit::before {
+  inset: 12%;
+  border: 1px dashed rgba(225, 196, 255, 0.08);
+}
+
+.orbit::after {
+  top: 13%;
+  right: 17%;
+  width: 8px;
+  height: 8px;
+  background: var(--act-accent);
+  box-shadow: 0 0 24px var(--act-accent);
+}
+
+.orbit > span {
+  position: absolute;
+  bottom: 16%;
+  left: 13%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--lilac);
+  box-shadow: 0 0 16px var(--lilac);
+}
+
+.starField {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  opacity: 0.34;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(247, 240, 255, 0.7) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(164, 124, 236, 0.75) 0 1px, transparent 1.5px);
+  background-position: 0 0, 37px 43px;
+  background-size: 83px 83px, 113px 113px;
+  mask-image: linear-gradient(to bottom, black, transparent 28%, transparent 72%, black);
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 920px;
+  min-width: 0;
+  margin-inline: auto;
+  animation: stageIn 620ms var(--ease-out) both;
+}
+
+.quizPanel {
+  width: 100%;
+}
+
+.panelFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 6px 0;
+}
+
+.panelFooter > p {
+  color: rgba(222, 211, 235, 0.54);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.backButton {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.backButton span {
+  color: var(--act-accent);
+  font-size: 1.05rem;
+}
+
+.statusCard {
+  width: min(100%, 660px);
+  margin-inline: auto;
+  padding: clamp(34px, 7vw, 68px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 28px 28px 28px 7px;
+  text-align: center;
+  background:
+    linear-gradient(145deg, rgba(45, 37, 78, 0.91), rgba(20, 16, 39, 0.94)),
+    var(--velvet);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.statusCard h1 {
+  margin: 10px auto 14px;
+  font-family: var(--font-display), serif;
+  font-size: clamp(2.35rem, 7vw, 4rem);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+.statusCard > p:not(.statusEyebrow, .errorMessage) {
+  max-width: 33rem;
+  margin-inline: auto;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.statusEyebrow {
+  color: var(--act-accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.loader {
+  position: relative;
+  width: 74px;
+  height: 74px;
+  margin: 0 auto 28px;
+  border: 1px solid rgba(225, 196, 255, 0.18);
+  border-radius: 50%;
+  animation: spin 2.4s linear infinite;
+}
+
+.loader::before {
+  position: absolute;
+  inset: 9px;
+  border: 1px dashed rgba(225, 196, 255, 0.28);
+  border-radius: inherit;
+  content: "";
+}
+
+.loader span {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--lilac);
+  box-shadow: 0 0 22px var(--violet);
+  transform: translateX(-50%);
+}
+
+.errorCard {
+  text-align: left;
+}
+
+.errorCard .statusEyebrow,
+.errorCard h1 {
+  text-align: center;
+}
+
+.errorMark {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 24px;
+  place-items: center;
+  border: 1px solid rgba(255, 186, 199, 0.42);
+  border-radius: 50%;
+  color: var(--danger);
+  font-family: var(--font-display), serif;
+  font-size: 2rem;
+  background: rgba(255, 186, 199, 0.07);
+}
+
+.errorMessage {
+  margin: 28px 0 12px;
+  padding: 14px 16px;
+  border-left: 2px solid var(--danger);
+  color: #ffe1e7;
+  background: rgba(255, 186, 199, 0.07);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.statusActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.statusActions button {
+  display: inline-flex;
+  min-height: 52px;
+  flex: 1 1 210px;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 12px 20px;
+  border: 1px solid transparent;
   border-radius: 12px;
+  color: #160f27;
+  background: var(--lilac);
+  font-size: 0.82rem;
+  font-weight: 800;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
-.ato1 {
-  background-color: #f6f3ff;
+.statusActions .secondaryButton {
+  border-color: var(--line);
+  color: var(--paper);
+  background: rgba(255, 255, 255, 0.045);
 }
 
-.ato2 {
-  background-color: #eef5ff;
+.cornerMark {
+  position: absolute;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  color: rgba(225, 196, 255, 0.35);
+  font-size: 0.59rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 
-.ato3 {
-  background-color: #fff0f6;
+.cornerMark span {
+  color: var(--act-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .backButton:hover {
+    color: var(--paper);
+    transform: translateX(-3px);
+  }
+
+  .statusActions button:hover {
+    background: #ead4ff;
+    box-shadow: 0 12px 32px rgba(164, 124, 236, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .statusActions .secondaryButton:hover {
+    background: rgba(255, 255, 255, 0.09);
+  }
+}
+
+@keyframes stageIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (max-width: 560px) {
+  .experience {
+    align-items: center;
+    padding-inline: 14px;
+  }
+
+  .panelFooter {
+    padding-top: 12px;
+  }
+
+  .panelFooter > p,
+  .cornerMark {
+    display: none;
+  }
+
+  .statusCard {
+    border-radius: 22px 22px 22px 6px;
+  }
+
+  .statusActions {
+    flex-direction: column;
+  }
+
+  .statusActions button {
+    flex-basis: auto;
+    width: 100%;
+  }
+}
+
+@media (max-height: 700px) {
+  .experience {
+    align-items: start;
+  }
 }

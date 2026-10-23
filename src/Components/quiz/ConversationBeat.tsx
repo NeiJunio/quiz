@@ -1,25 +1,29 @@
+import styles from "./ConversationBeat.module.css";
+
 type ConversationBeatProps = {
     lines: readonly string[];
-}
-
-import styles from "./ConversationBeat.module.css"
+};
 
 export default function ConversationBeat({ lines }: ConversationBeatProps) {
     return (
-        <section className={styles.container}>
-            <div className={styles.mensagens}>
-                {lines.map((linha, indice) => (
+        <section className={styles.container} aria-label="Preparando a revelação">
+            <div className={styles.orbit} aria-hidden="true">
+                <span />
+            </div>
+
+            <p className={styles.eyebrow}>Fim das pistas</p>
+
+            <div className={styles.messages}>
+                {lines.map((line, index) => (
                     <p
-                        key={indice}
-                        className={styles.linha}
-                        style={{
-                            animationDelay: `${indice * 900}ms`,
-                        }}
+                        key={line}
+                        className={styles.line}
+                        style={{ animationDelay: `${index * 900}ms` }}
                     >
-                        {linha}
+                        {line}
                     </p>
                 ))}
             </div>
         </section>
-    )
+    );
 }

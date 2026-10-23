@@ -1,4 +1,5 @@
 import type { QuizOption } from "@/types/quiz";
+
 import styles from "./QuestionCard.module.css";
 
 type OptionButtonProps = {
@@ -9,7 +10,6 @@ type OptionButtonProps = {
     onSelect: (value: string) => void;
 };
 
-
 export default function OptionButton({
     option,
     index,
@@ -17,31 +17,26 @@ export default function OptionButton({
     disabled = false,
     onSelect,
 }: OptionButtonProps) {
+    const letter = String.fromCharCode(65 + index);
+
     return (
         <button
             type="button"
-            className={styles.opcao}
+            className={`${styles.option} ${selected ? styles.optionSelected : ""}`}
             aria-pressed={selected}
             disabled={disabled}
             onClick={() => onSelect(option.value)}
         >
-            <span aria-hidden="true">
-                {index === 0 ? "A" : "B"}
+            <span className={styles.optionLetter} aria-hidden="true">
+                {letter}
             </span>
-
-            {" "}
-
-            <span aria-hidden="true">
+            <span className={styles.optionEmoji} aria-hidden="true">
                 {option.emoji}
             </span>
-
-            {" "}
-
-            <span>{option.label}</span>
-
-            {selected && (
-                <span aria-hidden="true"> ✓</span>
-            )}
+            <span className={styles.optionLabel}>{option.label}</span>
+            <span className={styles.optionCheck} aria-hidden="true">
+                ✓
+            </span>
         </button>
     );
 }

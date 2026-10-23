@@ -1,0 +1,268 @@
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  min-width: 0;
+  margin-inline: auto;
+  padding: clamp(30px, 7vw, 68px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 32px 32px 32px 8px;
+  background:
+    linear-gradient(145deg, rgba(45, 37, 78, 0.92), rgba(18, 15, 35, 0.96)),
+    var(--velvet);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  animation: reveal 700ms var(--ease-out) both;
+}
+
+.card::before {
+  position: absolute;
+  top: 0;
+  left: clamp(30px, 7vw, 68px);
+  width: 180px;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, var(--lilac), transparent);
+}
+
+.index {
+  position: absolute;
+  top: clamp(24px, 5vw, 44px);
+  right: clamp(24px, 5vw, 46px);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: rgba(225, 196, 255, 0.46);
+  font-size: 0.57rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.index strong {
+  color: var(--lilac);
+  font-size: 0.75rem;
+}
+
+.mark {
+  position: relative;
+  display: grid;
+  width: 78px;
+  height: 78px;
+  margin-bottom: 28px;
+  place-items: center;
+  border: 1px solid rgba(225, 196, 255, 0.2);
+  border-radius: 50%;
+}
+
+.mark::before,
+.mark::after {
+  position: absolute;
+  border-radius: inherit;
+  content: "";
+}
+
+.mark::before {
+  inset: 9px;
+  border: 1px dashed rgba(225, 196, 255, 0.24);
+}
+
+.mark::after {
+  top: 2px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  background: var(--lilac);
+  box-shadow: 0 0 16px var(--violet);
+  transform: translateX(-50%);
+}
+
+.mark span {
+  font-family: var(--font-display), serif;
+  font-size: 2.1rem;
+  font-weight: 600;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  color: var(--lilac);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.eyebrow span {
+  width: 18px;
+  height: 1px;
+  background: var(--violet);
+}
+
+.card h1 {
+  max-width: 38rem;
+  text-wrap: balance;
+  font-family: var(--font-display), serif;
+  font-size: clamp(2.55rem, 7.4vw, 5rem);
+  font-weight: 600;
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+}
+
+.card h1 em {
+  color: var(--lilac);
+  font-weight: 500;
+}
+
+.intro {
+  max-width: 31rem;
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: clamp(0.92rem, 2vw, 1.05rem);
+  line-height: 1.7;
+}
+
+.form {
+  position: relative;
+  max-width: 34rem;
+  margin-top: 34px;
+}
+
+.form > label {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--muted-strong);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.inputWrap {
+  position: relative;
+}
+
+.inputWrap input {
+  width: 100%;
+  min-height: 58px;
+  padding: 13px 48px 13px 16px;
+  border: 1px solid rgba(225, 196, 255, 0.2);
+  border-radius: 12px;
+  color: var(--paper);
+  background: rgba(8, 6, 20, 0.38);
+  caret-color: var(--lilac);
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.inputWrap input::placeholder {
+  color: rgba(198, 186, 215, 0.5);
+}
+
+.inputWrap input:hover,
+.inputWrap input:focus {
+  border-color: rgba(225, 196, 255, 0.54);
+  background: rgba(8, 6, 20, 0.54);
+}
+
+.inputWrap input:focus-visible {
+  box-shadow: 0 0 0 4px rgba(164, 124, 236, 0.13);
+}
+
+.inputWrap input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.inputWrap > span {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  color: var(--violet);
+  transform: translateY(-50%);
+}
+
+.error {
+  margin-top: 9px;
+  color: var(--danger);
+  font-size: 0.76rem;
+}
+
+.primaryButton {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 16px;
+  padding: 12px 22px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #170f29;
+  background: var(--lilac);
+  font-size: 0.8rem;
+  font-weight: 800;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.primaryButton span {
+  font-size: 1rem;
+}
+
+.footnote {
+  margin-top: 23px;
+  color: rgba(198, 186, 215, 0.56);
+  font-size: 0.67rem;
+  letter-spacing: 0.04em;
+}
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .primaryButton:hover {
+    background: #ead4ff;
+    box-shadow: 0 14px 32px rgba(164, 124, 236, 0.24);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 560px) {
+  .card {
+    border-radius: 24px 24px 24px 7px;
+  }
+
+  .index span {
+    display: none;
+  }
+
+  .mark {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 22px;
+  }
+
+  .card h1 {
+    font-size: clamp(2.35rem, 12.5vw, 3.6rem);
+  }
+
+  .primaryButton {
+    width: 100%;
+  }
+}

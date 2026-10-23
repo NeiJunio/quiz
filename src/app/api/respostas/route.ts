@@ -1,8 +1,26 @@
 
-import { Resend } from "resend";
+import { Resend, type ErrorResponse } from "resend";
 import { questions } from "@/data/questions";
 
 export const runtime = "nodejs";
+
+const errosTransitorios = new Set<ErrorResponse["name"]>([
+    "application_error",
+    "concurrent_idempotent_requests",
+    "internal_server_error",
+]);
+
+function deveRepetirEnvio(error: ErrorResponse) {
+    return (
+        error.statusCode === null ||
+        error.statusCode >= 500 ||
+        errosTransitorios.has(error.name)
+    );
+}
+
+function aguardar(tempoEmMs: number) {
+    return new Promise((resolve) => setTimeout(resolve, tempoEmMs));
+}
 
 // Verifica se um valor é um objeto válido.
 function ehObjeto(
@@ -96,7 +114,7 @@ export async function POST(request: Request) {
     }
 
 
-    // 3. Valida as dez respostas.
+    // 3. Valida as onze respostas.
     for (const pergunta of questions) {
         const resposta = respostas[pergunta.id];
 
@@ -147,10 +165,15 @@ export async function POST(request: Request) {
     const conteudoRespostas = questions
         .map((pergunta, indice) => {
             const resposta = respostas[pergunta.id] as string;
+            const respostaLegivel = pergunta.type === "choice"
+                ? pergunta.options.find((opcao) => opcao.value === resposta)
+                : null;
 
             return (
                 `${indice + 1}. ${pergunta.prompt}\n` +
-                `Resposta: ${resposta.trim()}`
+                `Resposta: ${respostaLegivel
+                    ? `${respostaLegivel.emoji} ${respostaLegivel.label}`
+                    : resposta.trim()}`
             );
         })
         .join("\n\n");
@@ -188,28 +211,44 @@ Fim das respostas.
         const resend = new Resend(apiKey);
 
 
-        const { data, error } = await resend.emails.send(
-            {
-                from: remetente,
-                to: [destino],
-                subject: `Respostas do Quiz Misterioso - ${nome.trim()}`,
-                text: corpoEmail,
-            },
-            {
-                idempotencyKey: `quiz-misterioso/${envioId}`,
-            }
-        );
+        const email = {
+            from: remetente,
+            to: [destino],
+            subject: `Respostas do Quiz Misterioso - ${nome.trim()}`,
+            text: corpoEmail,
+        };
+        const opcoesEnvio = {
+            idempotencyKey: `quiz-misterioso/${envioId}`,
+        };
+
+        let resultado = await resend.emails.send(email, opcoesEnvio);
+
+        // O provedor pode aceitar o e-mail e a resposta se perder na rede.
+        // Repetir com a mesma chave reconcilia o resultado sem duplicar o envio.
+        if (resultado.error && deveRepetirEnvio(resultado.error)) {
+            console.warn("Resposta do Resend não confirmada; repetindo envio idempotente.", {
+                nome: resultado.error.name,
+                statusCode: resultado.error.statusCode,
+            });
+
+            await aguardar(300);
+            resultado = await resend.emails.send(email, opcoesEnvio);
+        }
+
+        const { data, error } = resultado;
 
 
         if (error) {
             console.error("Erro do Resend:", error);
+
+            const status = error.statusCode === 429 ? 429 : 502;
 
             return Response.json(
                 {
                     ok: false,
                     erro: "Não foi possível enviar as respostas.",
                 },
-                { status: 502 }
+                { status }
             );
         }
 

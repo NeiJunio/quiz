@@ -1,10 +1,10 @@
-"use client";
 import Quiz from "@/Components/quiz/Quiz";
-export default function Home() {
+import styles from "./page.module.css";
 
+export default function Home() {
     return (
-        <main>
+        <main className={styles.main}>
             <Quiz />
         </main>
-    )
+    );
 }

@@ -1,27 +1,109 @@
-
 .container {
   width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
+  padding-inline: 6px;
 }
 
-.contador {
-  font-size: 14px;
-  font-weight: bold;
-  color: #666;
+.actRow,
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.actRow {
+  margin-bottom: 6px;
+}
+
+.act {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.act span {
+  color: var(--act-accent);
+}
+
+.percentage {
+  color: var(--act-accent);
+  font-size: 0.66rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+.meta {
   margin-bottom: 10px;
 }
 
-.trilha {
-  width: 100%;
-  height: 8px;
-  background-color: #e5e5e5;
-  border-radius: 20px;
-  overflow: hidden;
+.meta p {
+  color: rgba(222, 211, 235, 0.58);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.barra {
+.meta strong {
+  color: var(--paper);
+  font-size: 0.84rem;
+}
+
+.track {
+  width: 100%;
+  height: 4px;
+  overflow: visible;
+  border-radius: 99px;
+  background: rgba(225, 196, 255, 0.1);
+}
+
+.bar {
+  position: relative;
   height: 100%;
-  background-color: #8261b9;
-  border-radius: 20px;
-  transition: width 0.3s ease;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(164, 124, 236, 0.45), var(--act-accent));
+  box-shadow: 0 0 18px rgba(164, 124, 236, 0.28);
+  transition: width 520ms var(--ease-out), background 500ms ease;
+}
+
+.bar span {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #141027;
+  border-radius: 50%;
+  background: var(--act-accent);
+  box-shadow: 0 0 14px var(--act-accent);
+  transform: translate(50%, -50%);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 560px) {
+  .container {
+    margin-bottom: 12px;
+  }
+
+  .act {
+    max-width: 78%;
+    font-size: 0.61rem;
+    line-height: 1.35;
+  }
 }

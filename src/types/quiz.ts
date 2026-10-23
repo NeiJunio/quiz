@@ -1,17 +1,16 @@
 
 export type AnswerKey =
-    | "doceOuSalgado"
-    | "cafeOuAcai"
-    | "sairOuCasa"
-    | "planejadoOuImproviso"
-    | "praiaOuNatureza"
-    | "diaOuNoite"
-    | "filmeOuMusica"
-    | "movimentadoOuTranquilo"
+    | "preferenciaRestaurante"
+    | "preferenciaLancheBebida"
+    | "programaSabado"
+    | "estiloPlanejamento"
+    | "destinoFimDeSemana"
+    | "coisasQueFazemSorrir"
+    | "ambientePreferido"
+    | "descobertaSobreVoce"
     | "comidaIrresistivel"
     | "perguntaQueFaltou"
-    | "sugestaoComentario"
-    ;
+    | "sugestaoComentario";
 
 export type QuizAnswers = Partial<Record<AnswerKey, string>>;
 
@@ -21,11 +20,30 @@ export interface QuizOption {
     value: string;
 }
 
-export interface QuizQuestion {
+export type QuizAct = 1 | 2 | 3;
+
+type FourOptions = readonly [
+    QuizOption,
+    QuizOption,
+    QuizOption,
+    QuizOption,
+];
+
+interface BaseQuestion {
     id: AnswerKey;
     prompt: string;
-    type: "choice" | "text";
-    options?: QuizOption[];
-    placeholder?: string;
-    maxLength?: number;
+    act: QuizAct;
 }
+
+export interface ChoiceQuestion extends BaseQuestion {
+    type: "choice";
+    options: FourOptions;
+}
+
+export interface TextQuestion extends BaseQuestion {
+    type: "text";
+    placeholder: string;
+    maxLength: number;
+}
+
+export type QuizQuestion = ChoiceQuestion | TextQuestion;

@@ -1,41 +1,43 @@
+import styles from "./Success.module.css";
+
 type SuccessProps = {
     nome: string;
-}
+};
 
 export default function Success({ nome }: SuccessProps) {
     return (
-        <section>
-            <p>✨ Mistério revelado ✨</p>
+        <section className={styles.card} aria-labelledby="titulo-sucesso">
+            <div className={styles.burst} aria-hidden="true">
+                <span />
+                <span />
+                <span />
+                <span />
+            </div>
 
-            <h1>Prontinho, {nome}! 💜</h1>
+            <p className={styles.eyebrow}>✦ Mistério revelado ✦</p>
 
-            <h2>
-                Agora posso te contar uma coisinha... 👀
-            </h2>
+            <h1 id="titulo-sucesso">
+                Prontinho, <em>{nome}.</em>
+            </h1>
 
-            <p>
-                Esse quiz todo foi só uma brincadeira que
-                inventei para te conhecer um pouquinho melhor.
-                Kkkkk 😅
-            </p>
+            <p className={styles.lead}>Agora posso te contar uma coisinha…</p>
 
-            <p>
-                Queria descobrir um pouco mais sobre seus gostos,
-                suas preferências e algumas coisinhas que talvez
-                não surgissem numa conversa normal.
-            </p>
+            <div className={styles.copy}>
+                <p>
+                    Esse quiz foi uma brincadeira que inventei para conhecer um
+                    pouquinho melhor seus gostos, preferências e aquelas pequenas
+                    coisas que nem sempre aparecem numa conversa normal.
+                </p>
+                <p>
+                    Obrigado por entrar na brincadeira e dividir alguns minutos — e
+                    onze boas pistas — comigo.
+                </p>
+            </div>
 
-            <p>
-                Obrigado por entrar na brincadeira e dedicar
-                um pouquinho do seu tempo para responder! ❤️
-            </p>
-
-            <p>
-                <em>
-                    No fim, a curiosidade era toda minha. 🤭
-                </em>
-            </p>
-
+            <div className={styles.finalNote}>
+                <span aria-hidden="true">11/11</span>
+                <p>No fim, a curiosidade era toda minha.</p>
+            </div>
         </section>
     );
 }

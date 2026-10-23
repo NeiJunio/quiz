@@ -1,25 +1,369 @@
+.card {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 390px;
+  padding: clamp(26px, 5vw, 52px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 28px 28px 28px 7px;
+  background:
+    linear-gradient(145deg, rgba(43, 35, 75, 0.9), rgba(18, 15, 35, 0.95)),
+    var(--velvet);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  animation: cardIn 520ms var(--ease-out) both;
+}
 
-.opcoes {
+.card::before {
+  position: absolute;
+  top: 0;
+  left: clamp(26px, 5vw, 52px);
+  width: min(160px, 32%);
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, var(--act-accent), transparent);
+}
+
+.questionHead {
+  position: relative;
+  display: flex;
+  min-height: 34px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.questionHead > span {
+  position: absolute;
+  z-index: 0;
+  top: -38px;
+  right: -8px;
+  color: rgba(225, 196, 255, 0.055);
+  font-family: var(--font-display), serif;
+  font-size: clamp(5rem, 13vw, 8rem);
+  font-weight: 600;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.questionNumber {
+  position: relative;
+  z-index: 1;
+  color: var(--act-accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.prompt {
+  position: relative;
+  z-index: 1;
+  max-width: 49rem;
+  margin: 6px 0 clamp(24px, 4vw, 38px);
+  text-wrap: balance;
+  color: var(--paper);
+  font-family: var(--font-display), serif;
+  font-size: clamp(2rem, 5.1vw, 3.55rem);
+  font-weight: 600;
+  line-height: 1.03;
+  letter-spacing: -0.035em;
+}
+
+.options {
+  display: grid;
+  gap: 10px;
+}
+
+.option {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 64px;
+  grid-template-columns: 42px 34px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px 10px 10px;
+  overflow: hidden;
+  border: 1px solid rgba(225, 196, 255, 0.13);
+  border-radius: 14px;
+  color: var(--muted-strong);
+  text-align: left;
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  transition:
+    border-color 190ms ease,
+    color 190ms ease,
+    background 190ms ease,
+    transform 190ms var(--ease-out),
+    box-shadow 190ms ease;
+}
+
+.option::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--act-soft), transparent 52%);
+  transition: opacity 190ms ease;
+}
+
+.optionLetter {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(225, 196, 255, 0.2);
+  border-radius: 10px;
+  color: var(--lilac);
+  font-size: 0.72rem;
+  font-weight: 800;
+  transition: background 190ms ease, color 190ms ease, border-color 190ms ease;
+}
+
+.optionEmoji,
+.optionLabel,
+.optionCheck {
+  position: relative;
+  z-index: 1;
+}
+
+.optionEmoji {
+  font-size: 1.35rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.optionLabel {
+  min-width: 0;
+  font-size: clamp(0.86rem, 2vw, 0.98rem);
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.optionCheck {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid rgba(225, 196, 255, 0.2);
+  border-radius: 50%;
+  color: transparent;
+  font-size: 0.72rem;
+  transition: color 190ms ease, background 190ms ease, border-color 190ms ease;
+}
+
+.optionSelected {
+  border-color: var(--act-accent);
+  color: var(--paper);
+  background: rgba(164, 124, 236, 0.13);
+  box-shadow: 0 12px 28px rgba(6, 3, 18, 0.16);
+}
+
+.optionSelected::after {
+  opacity: 1;
+}
+
+.optionSelected .optionLetter,
+.optionSelected .optionCheck {
+  border-color: var(--act-accent);
+  color: #170f29;
+  background: var(--act-accent);
+}
+
+.option:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.textForm {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 20px;
 }
 
-.opcao {
-  padding: 14px;
-  background-color: rgb(155, 94, 94);
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: left;
+.textForm label {
+  margin-bottom: 10px;
+  color: var(--muted-strong);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.opcao:hover {
-  background-color: #b33131;
+.textForm textarea {
+  width: 100%;
+  min-height: 138px;
+  resize: vertical;
+  padding: 18px;
+  border: 1px solid rgba(225, 196, 255, 0.18);
+  border-radius: 14px;
+  color: var(--paper);
+  background: rgba(8, 6, 20, 0.34);
+  caret-color: var(--lilac);
+  line-height: 1.65;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
-.opcao[aria-pressed="true"] {
-  background-color: #eee6ff;
-  border-color: #7652b5;
+.textForm textarea::placeholder {
+  color: rgba(198, 186, 215, 0.52);
+}
+
+.textForm textarea:hover,
+.textForm textarea:focus {
+  border-color: rgba(225, 196, 255, 0.44);
+  background: rgba(8, 6, 20, 0.52);
+}
+
+.textForm textarea:focus-visible {
+  box-shadow: 0 0 0 4px rgba(164, 124, 236, 0.12);
+}
+
+.textForm textarea[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.textMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 9px;
+  color: rgba(198, 186, 215, 0.62);
+  font-size: 0.72rem;
+}
+
+.counter {
+  font-variant-numeric: tabular-nums;
+}
+
+.error {
+  margin-top: 12px;
+  color: var(--danger);
+  font-size: 0.78rem;
+}
+
+.saveButton {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  align-self: flex-start;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 22px;
+  padding: 11px 20px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #170f29;
+  background: var(--lilac);
+  font-size: 0.8rem;
+  font-weight: 800;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.saveButton span {
+  font-size: 1rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .option:not(:disabled):hover {
+    border-color: rgba(225, 196, 255, 0.4);
+    color: var(--paper);
+    background: rgba(164, 124, 236, 0.09);
+    box-shadow: 0 10px 26px rgba(5, 3, 16, 0.17);
+    transform: translateX(4px);
+  }
+
+  .option:not(:disabled):hover::after {
+    opacity: 0.65;
+  }
+
+  .option:not(:disabled):hover .optionLetter {
+    border-color: var(--act-accent);
+  }
+
+  .saveButton:hover {
+    background: #ead4ff;
+    box-shadow: 0 12px 32px rgba(164, 124, 236, 0.22);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 560px) {
+  .card {
+    min-height: auto;
+    border-radius: 22px 22px 22px 6px;
+  }
+
+  .questionHead > span {
+    top: -22px;
+    right: -4px;
+    font-size: 4.75rem;
+  }
+
+  .prompt {
+    margin-top: 10px;
+    font-size: clamp(1.85rem, 9vw, 2.5rem);
+  }
+
+  .option {
+    min-height: 62px;
+    grid-template-columns: 38px 28px minmax(0, 1fr) 20px;
+    gap: 9px;
+    padding: 9px 12px 9px 9px;
+  }
+
+  .optionLetter {
+    width: 38px;
+    height: 42px;
+  }
+
+  .optionEmoji {
+    font-size: 1.18rem;
+  }
+
+  .optionLabel {
+    font-size: 0.82rem;
+  }
+
+  .optionCheck {
+    width: 19px;
+    height: 19px;
+  }
+
+  .saveButton {
+    width: 100%;
+    align-self: stretch;
+  }
+}
+
+@media (max-width: 350px) {
+  .card {
+    padding-inline: 19px;
+  }
+
+  .option {
+    grid-template-columns: 34px 24px minmax(0, 1fr);
+  }
+
+  .optionLetter {
+    width: 34px;
+  }
+
+  .optionCheck {
+    display: none;
+  }
 }

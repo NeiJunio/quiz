@@ -1,45 +1,111 @@
-
 .container {
-  min-height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px;
-  background-color: #f5f0fa;
-  border-radius: 12px;
-}
-
-.mensagens {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  min-width: 0;
+  min-height: 460px;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(32px, 8vw, 72px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 28px 28px 28px 7px;
   text-align: center;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(164, 124, 236, 0.14), transparent 50%),
+    linear-gradient(160deg, rgba(41, 29, 65, 0.94), rgba(12, 9, 24, 0.98));
+  box-shadow: var(--shadow);
 }
 
-.linha {
-  font-size: 22px;
+.orbit {
+  position: absolute;
+  width: min(410px, 82vw);
+  aspect-ratio: 1;
+  border: 1px solid rgba(225, 196, 255, 0.09);
+  border-radius: 50%;
+  animation: slowSpin 11s linear infinite;
+}
+
+.orbit::before {
+  position: absolute;
+  inset: 13%;
+  border: 1px dashed rgba(225, 196, 255, 0.1);
+  border-radius: inherit;
+  content: "";
+}
+
+.orbit span {
+  position: absolute;
+  top: 10%;
+  left: 21%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lilac);
+  box-shadow: 0 0 22px var(--violet);
+}
+
+.eyebrow,
+.messages {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  margin-bottom: 28px;
+  color: var(--lilac);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.line {
+  color: var(--muted);
+  font-size: clamp(0.95rem, 2.4vw, 1.1rem);
   line-height: 1.5;
-  color: #493d57;
-
   opacity: 0;
-  animation: aparecer 0.5s ease forwards;
+  animation: lineIn 580ms var(--ease-out) forwards;
 }
 
-@keyframes aparecer {
+.line:last-child {
+  margin-top: 5px;
+  color: var(--paper);
+  font-family: var(--font-display), serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+@keyframes lineIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .linha {
-    opacity: 1;
-    animation: none;
+@keyframes slowSpin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (max-width: 560px) {
+  .container {
+    min-height: 400px;
+    border-radius: 22px 22px 22px 6px;
   }
 }

@@ -1,53 +1,67 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
-// Componentes
-import NameStep from "./NameStep";
-import Intro from "./Intro";
-import QuestionCard from "./QuestionCard";
-import Success from "./Success";
-import Progress from "./Progress";
-import Reaction from "./Reaction";
+import { getReaction, questions, type ReactionCue } from "@/data/questions";
+import type { QuizAct, QuizAnswers } from "@/types/quiz";
+
 import ConversationBeat from "./ConversationBeat";
-
-// Data
-import { questions, getReaction, type ReactionCue } from "@/data/questions";
-
-// Types
-import type { QuizAnswers } from "@/types/quiz";
-
-// styles
+import Intro from "./Intro";
+import NameStep from "./NameStep";
+import Progress from "./Progress";
+import QuestionCard from "./QuestionCard";
+import Reaction from "./Reaction";
+import Success from "./Success";
 import styles from "./Quiz.module.css";
 
+type Screen =
+    | "inicio"
+    | "apresentacao"
+    | "pergunta"
+    | "reacao"
+    | "intervalo"
+    | "enviando"
+    | "erroEnvio"
+    | "concluido";
+
+const actDetails: Record<QuizAct, { title: string; shortLabel: string }> = {
+    1: {
+        title: "Conhecendo seus gostos",
+        shortLabel: "Gostos",
+    },
+    2: {
+        title: "Descobrindo suas preferências",
+        shortLabel: "Preferências",
+    },
+    3: {
+        title: "Um pouquinho além do óbvio",
+        shortLabel: "Além do óbvio",
+    },
+};
+
 export default function Quiz() {
-
     const [nome, setNome] = useState("");
-    const [tela, setTela] = useState("inicio");
+    const [tela, setTela] = useState<Screen>("inicio");
     const [website, setWebsite] = useState("");
-
     const [respostas, setRespostas] = useState<QuizAnswers>({});
     const [indicePergunta, setIndicePergunta] = useState(0);
-
     const [reacao, setReacao] = useState<ReactionCue | null>(null);
-
     const [mensagemErroEnvio, setMensagemErroEnvio] = useState("");
-
     const envioIdRef = useRef<string | null>(null);
 
-    function responder(resposta: string) {
-        const perguntaAtual = questions[indicePergunta];
+    const perguntaAtual = questions[indicePergunta];
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [tela, indicePergunta]);
+
+    function responder(resposta: string) {
         setRespostas((anteriores) => ({
             ...anteriores,
             [perguntaAtual.id]: resposta,
         }));
 
-        const novaReacao = getReaction(
-            perguntaAtual.id,
-            resposta,
-            nome
-        );
+        const novaReacao = getReaction(perguntaAtual.id, resposta, nome);
 
         if (novaReacao !== null) {
             setReacao(novaReacao);
@@ -62,13 +76,12 @@ export default function Quiz() {
         }
     }
 
-
     useEffect(() => {
         if (tela !== "reacao" || reacao === null) {
             return;
         }
 
-        const temporizador = setTimeout(() => {
+        const temporizador = window.setTimeout(() => {
             setReacao(null);
 
             if (indicePergunta < questions.length - 1) {
@@ -79,25 +92,19 @@ export default function Quiz() {
             }
         }, reacao.duration);
 
-        return () => {
-            clearTimeout(temporizador);
-        };
+        return () => window.clearTimeout(temporizador);
     }, [tela, reacao, indicePergunta]);
-
-
 
     useEffect(() => {
         if (tela !== "intervalo") {
             return;
         }
 
-        const temporizador = setTimeout(() => {
-
+        const temporizador = window.setTimeout(() => {
             async function enviarRespostas() {
                 setTela("enviando");
 
                 const envioId = envioIdRef.current ?? crypto.randomUUID();
-
                 envioIdRef.current = envioId;
 
                 try {
@@ -107,55 +114,50 @@ export default function Quiz() {
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            nome: nome,
-                            respostas: respostas,
+                            nome,
+                            respostas,
                             envioId,
-                            website
+                            website,
                         }),
                     });
 
-
                     if (respostaHTTP.status === 429) {
                         throw new Error(
-                            "Muitas tentativas de envio foram realizadas. " +
-                            "Aguarde alguns minutos antes de tentar novamente."
+                            "Muitas tentativas de envio foram realizadas. Aguarde alguns minutos antes de tentar novamente.",
                         );
                     }
 
-                    const resultado = await respostaHTTP.json();
+                    const resultado: unknown = await respostaHTTP.json();
+                    const envioConfirmado =
+                        typeof resultado === "object" &&
+                        resultado !== null &&
+                        "ok" in resultado &&
+                        resultado.ok === true;
 
-                    if (!respostaHTTP.ok || resultado.ok !== true) {
-                        throw new Error(
-                            "Não foi possível enviar as respostas."
-                        );
+                    if (!respostaHTTP.ok || !envioConfirmado) {
+                        throw new Error("Não foi possível enviar as respostas.");
                     }
 
                     setTela("concluido");
-                }
-                catch (erro) {
+                } catch (erro) {
                     console.error("Erro ao enviar respostas:", erro);
 
                     const mensagem =
                         erro instanceof Error &&
-                            erro.message.startsWith("Muitas tentativas de envio")
+                        erro.message.startsWith("Muitas tentativas de envio")
                             ? erro.message
                             : "Não conseguimos confirmar o envio das suas respostas. Tente novamente.";
 
                     setMensagemErroEnvio(mensagem);
                     setTela("erroEnvio");
                 }
-
             }
 
             void enviarRespostas();
         }, 4400);
 
-        return () => {
-            clearTimeout(temporizador);
-        };
-    }, [tela, nome, respostas]);
-
-
+        return () => window.clearTimeout(temporizador);
+    }, [tela, nome, respostas, website]);
 
     function voltar() {
         if (indicePergunta === 0) {
@@ -166,91 +168,62 @@ export default function Quiz() {
         setIndicePergunta((atual) => atual - 1);
     }
 
-
     function avancar() {
-        if (nome.trim() === "") {
-            return
+        const nomeLimpo = nome.trim();
+
+        if (nomeLimpo.length < 2) {
+            return;
         }
+
+        setNome(nomeLimpo);
         setTela("apresentacao");
     }
 
+    let content: ReactNode;
+
     if (tela === "apresentacao") {
-        return (
+        content = (
             <Intro
                 nome={nome}
                 onStart={() => setTela("pergunta")}
                 onBack={() => setTela("inicio")}
             />
         );
-    }
-
-    if (tela === "reacao" && reacao !== null) {
-        return (
-            <Reaction
-                text={reacao.text}
-                tone={reacao.tone}
-            />
+    } else if (tela === "reacao" && reacao !== null) {
+        content = (
+            <Reaction text={reacao.text} symbol={reacao.symbol} tone={reacao.tone} />
         );
-    }
+    } else if (tela === "pergunta") {
+        const act = perguntaAtual.act;
+        const details = actDetails[act];
 
-    if (tela === "pergunta") {
-        const perguntaAtual = questions[indicePergunta];
-
-
-        const atoAtual =
-            indicePergunta < 3 ? 1 :
-                indicePergunta < 7 ? 2 : 3;
-
-
-        const tituloAto =
-            atoAtual === 1
-                ? "Quebrando o gelo"
-                : atoAtual === 2
-                    ? "Conhecendo seus gostos"
-                    : "Últimas curiosidades";
-
-
-        const classeAto =
-            atoAtual === 1
-                ? styles.ato1
-                : atoAtual === 2
-                    ? styles.ato2
-                    : styles.ato3;
-
-
-        return (
-            <section className={`${styles.container} ${classeAto}`}>
-
-                <p>
-                    <strong>Ato {atoAtual}</strong> — {tituloAto}
-                </p>
-
+        content = (
+            <section className={styles.quizPanel} aria-label={`Ato ${act}: ${details.title}`}>
                 <Progress
                     current={indicePergunta + 1}
                     total={questions.length}
+                    act={act}
+                    actTitle={details.title}
                 />
 
                 <QuestionCard
                     key={perguntaAtual.id}
                     pergunta={perguntaAtual}
-                    respostaSelecionada={
-                        respostas[perguntaAtual.id] ?? null
-                    }
+                    numero={indicePergunta + 1}
+                    respostaSelecionada={respostas[perguntaAtual.id] ?? null}
                     onResponder={responder}
                 />
 
-                <button type="button" onClick={voltar}>
-                    Voltar
-                </button>
-
-
-            </section >
+                <div className={styles.panelFooter}>
+                    <button className={styles.backButton} type="button" onClick={voltar}>
+                        <span aria-hidden="true">←</span> Voltar
+                    </button>
+                    <p aria-hidden="true">{details.shortLabel} · {indicePergunta + 1}/11</p>
+                </div>
+            </section>
         );
-    }
-
-
-    if (tela === "intervalo") {
-        return (
+    } else if (tela === "intervalo") {
+        content = (
             <ConversationBeat
                 lines={[
                     "Tá… 👀",
@@ -259,85 +232,81 @@ export default function Quiz() {
                 ]}
             />
         );
-    }
-
-
-    if (tela === "enviando") {
-        return (
-            <section role="status" aria-live="polite">
-                <h2>Enviando suas respostas... 💌</h2>
-
-                <p>
-                    Estamos finalizando o Quiz Misterioso.
-                </p>
+    } else if (tela === "enviando") {
+        content = (
+            <section className={styles.statusCard} role="status" aria-live="polite">
+                <div className={styles.loader} aria-hidden="true">
+                    <span />
+                </div>
+                <p className={styles.statusEyebrow}>Organizando as pistas</p>
+                <h1>Só um instante…</h1>
+                <p>Estamos finalizando o Quiz Misterioso com cuidado.</p>
             </section>
         );
-    }
-
-
-    if (tela === "erroEnvio") {
-        return (
-            <section>
-                <h2>Ops, tivemos um probleminha! 😅</h2>
-
-
-                <p role="alert">
+    } else if (tela === "erroEnvio") {
+        content = (
+            <section className={`${styles.statusCard} ${styles.errorCard}`}>
+                <div className={styles.errorMark} aria-hidden="true">!</div>
+                <p className={styles.statusEyebrow}>As pistas continuam seguras</p>
+                <h1>O envio não foi confirmado.</h1>
+                <p className={styles.errorMessage} role="alert">
                     {mensagemErroEnvio}
                 </p>
-
-
                 <p>
-                    Mas não se preocupe, suas respostas continuam
-                    preenchidas nesta página.
+                    Suas respostas continuam preenchidas nesta página. Você pode tentar
+                    novamente ou revisar a última pergunta.
                 </p>
-
-                <button
-                    type="button"
-                    onClick={() => setTela("intervalo")}
-                >
-                    Tentar novamente
-                </button>
-
-                <button
-                    type="button"
-                    onClick={() => {
-                        setIndicePergunta(questions.length - 1);
-                        setTela("pergunta");
-                    }}
-                >
-                    Voltar à última pergunta
-                </button>
+                <div className={styles.statusActions}>
+                    <button type="button" onClick={() => setTela("intervalo")}>
+                        Tentar novamente <span aria-hidden="true">→</span>
+                    </button>
+                    <button
+                        className={styles.secondaryButton}
+                        type="button"
+                        onClick={() => {
+                            setIndicePergunta(questions.length - 1);
+                            setTela("pergunta");
+                        }}
+                    >
+                        Voltar à última pergunta
+                    </button>
+                </div>
             </section>
+        );
+    } else if (tela === "concluido") {
+        content = <Success nome={nome} />;
+    } else {
+        content = (
+            <NameStep
+                nome={nome}
+                onNomeChange={setNome}
+                onContinuar={avancar}
+                website={website}
+                onWebsiteChange={setWebsite}
+            />
         );
     }
 
-
-
-    // if (tela === "concluído") {
-    //     return (
-    //         <Success
-    //             nome={nome}
-    //             onBack={() => {
-    //                 setIndicePergunta(questions.length - 1);
-    //                 setTela("pergunta");
-    //             }}
-    //         />
-    //     );
-    // }
-
-
-    if (tela === "concluido") {
-        return <Success nome={nome} />;
-    }
-
+    const actVisual: QuizAct =
+        tela === "pergunta" || tela === "reacao"
+            ? perguntaAtual.act
+            : tela === "inicio" || tela === "apresentacao"
+                ? 1
+                : 3;
 
     return (
-        <NameStep
-            nome={nome}
-            onNomeChange={setNome}
-            onContinuar={avancar}
-            website={website}
-            onWebsiteChange={setWebsite}
-        />
-    )
+        <div className={styles.experience} data-act={actVisual}>
+            <div className={styles.ambientGlow} aria-hidden="true" />
+            <div className={styles.orbit} aria-hidden="true">
+                <span />
+            </div>
+            <div className={styles.starField} aria-hidden="true" />
+
+            <div className={styles.stage}>{content}</div>
+
+            <p className={styles.cornerMark} aria-hidden="true">
+                QM <span>·</span> arquivo particular
+            </p>
+        </div>
+    );
 }
